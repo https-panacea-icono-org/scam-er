@@ -119,7 +119,7 @@ class UserProfile {
     var username: String
     var email: String
     var phoneNumber: String
-    var preferences: [String: Any]
+    var preferences: String // Cambiado a String para compatibilidad con SwiftData
     var createdAt: Date
     var updatedAt: Date
     
@@ -128,9 +128,26 @@ class UserProfile {
         self.username = username
         self.email = email
         self.phoneNumber = phoneNumber
-        self.preferences = [:]
+        self.preferences = "{}" // Inicializar como JSON string vacío
         self.createdAt = Date()
         self.updatedAt = Date()
+    }
+    
+    // Método helper para obtener preferencias como diccionario
+    func getPreferences() -> [String: Any] {
+        guard let data = preferences.data(using: .utf8),
+              let dict = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            return [:]
+        }
+        return dict
+    }
+    
+    // Método helper para actualizar preferencias
+    func updatePreferences(_ newPreferences: [String: Any]) {
+        if let data = try? JSONSerialization.data(withJSONObject: newPreferences),
+           let jsonString = String(data: data, encoding: .utf8) {
+            self.preferences = jsonString
+        }
     }
 }
 

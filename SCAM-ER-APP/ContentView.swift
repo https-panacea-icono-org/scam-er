@@ -184,7 +184,7 @@ struct DashboardView: View {
             
             StatCard(
                 title: "Pérdidas Evitadas",
-                value: "$\(stats.avoidedLosses, format: .number.precision(.fractionLength(1)))M",
+                value: "$\(String(format: "%.1f", stats.avoidedLosses))M",
                 icon: "dollarsign.circle.fill",
                 color: .green,
                 trend: "+\(stats.savingsTrend)%"
@@ -296,7 +296,7 @@ struct DashboardView: View {
     
     private func refreshData() async {
         // Refrescar datos
-        await Task.sleep(nanoseconds: 1_000_000_000) // Simular delay
+        try? await Task.sleep(nanoseconds: 1_000_000_000) // Simular delay
         loadDashboardData()
     }
 }
@@ -444,86 +444,6 @@ struct QuickActionButton: View {
     }
 }
 
-// MARK: - Data Models
-struct DashboardStats {
-    var todayReports: Int = 0
-    var detectedFrauds: Int = 0
-    var avoidedLosses: Double = 0.0
-    var aiAccuracy: Int = 0
-    var reportsTrend: Int = 0
-    var detectionTrend: Int = 0
-    var savingsTrend: Int = 0
-    var accuracyTrend: Int = 0
-    var unreadAlerts: Int = 0
-    var recentAlerts: [SecurityAlert] = []
-    var featuredCases: [FeaturedCase] = []
-    
-    static func sample() -> DashboardStats {
-        var stats = DashboardStats()
-        stats.todayReports = 47
-        stats.detectedFrauds = 23
-        stats.avoidedLosses = 2.4
-        stats.aiAccuracy = 89
-        stats.reportsTrend = 12
-        stats.detectionTrend = 8
-        stats.savingsTrend = 23
-        stats.accuracyTrend = 2
-        stats.unreadAlerts = 3
-        
-        stats.recentAlerts = [
-            SecurityAlert(title: "Fake Tonkeeper v2.0", message: "156 reportes en 2 horas", severity: "high"),
-            SecurityAlert(title: "CryptoBot Scam", message: "89 reportes confirmados", severity: "medium"),
-            SecurityAlert(title: "Binance Phishing", message: "23 reportes verificados", severity: "low")
-        ]
-        
-        stats.featuredCases = [
-            FeaturedCase(title: "Tonkeeper Fake Wallet", reports: 156, status: "Investigando"),
-            FeaturedCase(title: "CryptoBot Scam Campaign", reports: 89, status: "Verificado"),
-            FeaturedCase(title: "Binance Phishing Site", reports: 23, status: "Resuelto")
-        ]
-        
-        return stats
-    }
-}
-
-struct SecurityAlert {
-    let id = UUID()
-    let title: String
-    let message: String
-    let severity: String
-    let createdAt = Date()
-    
-    var severityColor: Color {
-        switch severity {
-        case "high": return .red
-        case "medium": return .orange
-        case "low": return .green
-        default: return .gray
-        }
-    }
-    
-    var timeAgo: String {
-        let formatter = RelativeDateTimeFormatter()
-        formatter.unitsStyle = .abbreviated
-        return formatter.localizedString(for: createdAt, relativeTo: Date())
-    }
-}
-
-struct FeaturedCase {
-    let id = UUID()
-    let title: String
-    let reports: Int
-    let status: String
-    
-    var statusColor: Color {
-        switch status {
-        case "Investigando": return .orange
-        case "Verificado": return .red
-        case "Resuelto": return .green
-        default: return .gray
-        }
-    }
-}
 
 // MARK: - Placeholder Views
 struct FraudDetectionView: View {
